@@ -28,7 +28,7 @@ const Users = ({ users: allUsers, ...rest }) => {
    };
 
    const filtredUsers = selectedProf
-      ? allUsers.filter((user) => user.profession === selectedProf)
+      ? allUsers.filter((user) => user.profession._id === selectedProf._id)
       : allUsers;
    const usersCrop = paginate(filtredUsers, currentPage, pageSize);
    const count = filtredUsers.length;
