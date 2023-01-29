@@ -14,7 +14,7 @@ const TableHeader = ({ onSort, selectedSort, columns }) => {
    };
 
    const handleClick = (column) => {
-      if (columns[column].path === selectedSort.path) {
+      if (columns[column].path && columns[column].path === selectedSort.path) {
          if (selectedSort.order === 'asc') {
             return 'bi bi-caret-up-fill';
          } else {
