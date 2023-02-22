@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import PropTypes from "prop-types";
 
@@ -7,6 +7,11 @@ const MultiSelectField = ({ options, onChange, name, label, defaultValue }) => {
         !Array.isArray(options) && typeof options === "object"
             ? Object.values(options)
             : options;
+
+    const [defaultOption, setDefaultOption] = useState("");
+    useEffect(() => {
+        setDefaultOption(defaultValue);
+    }, [defaultValue]);
 
     const handleChange = (value) => {
         onChange({ name: name, value });
@@ -17,7 +22,7 @@ const MultiSelectField = ({ options, onChange, name, label, defaultValue }) => {
             <Select
                 isMulti
                 closeMenuOnSelect={false}
-                defaultValue={defaultValue}
+                value={defaultOption}
                 options={optionsArray}
                 className="basic-multi-select"
                 classNamePrefix="select"

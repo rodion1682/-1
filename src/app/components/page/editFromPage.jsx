@@ -9,28 +9,37 @@ import MultiSelectField from "../common/form/multiSelectField";
 
 const EditFromPage = () => {
     const history = useHistory();
-    const usersData = JSON.parse(localStorage.getItem("users"));
     const { userId } = useParams();
-    const selectedUserFiltredById = usersData.find((obj) => obj._id === userId);
-    const [data, setData] = useState({
-        name: selectedUserFiltredById.name,
-        email: selectedUserFiltredById.email,
-        profession: selectedUserFiltredById.profession.name,
-        sex: "male",
-        qualities: selectedUserFiltredById.qualities.map((quality) => {
-            return {
-                label: quality.name,
-                value: quality._id,
-                color: quality.color
-            };
-        }),
-        licence: false
-    });
-    console.log(selectedUserFiltredById);
 
+    const [data, setData] = useState({
+        name: "",
+        email: "",
+        profession: "",
+        sex: "male",
+        qualities: []
+    });
     const [qualities, setQualities] = useState([]);
     const [professions, setProfession] = useState([]);
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        api.users.getById(userId).then((user) => {
+            setData({
+                name: user.name,
+                email: user.email,
+                profession: user.profession._id,
+
+                sex: user.sex,
+                qualities: user.qualities.map((quality) => {
+                    return {
+                        value: quality._id,
+                        label: quality.name,
+                        color: quality.color
+                    };
+                })
+            });
+        });
+    }, [userId]);
 
     useEffect(() => {
         api.professions.fetchAll().then((data) => {
@@ -70,45 +79,47 @@ const EditFromPage = () => {
             }
         }
     };
-    useEffect(() => {
-        validate();
-    }, [data]);
-    const validate = () => {
-        const errors = validator(data, validatorConfig);
-        setErrors(errors);
-        return Object.keys(errors).length === 0;
-    };
-    const isValid = Object.keys(errors).length === 0;
+    // useEffect(() => {
+    //     validate();
+    // }, [data]);
+    // const validate = () => {
+    //     const errors = validator(data, validatorConfig);
+    //     setErrors(errors);
+    //     return Object.keys(errors).length === 0;
+    // };
+    // const isValid = Object.keys(errors).length === 0;
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const isValid = validate();
-        if (!isValid) return;
+        //  const isValid = validate();
+        //  if (!isValid) return;
 
-        const updatedData = usersData.map((user) => {
-            if (user._id === userId) {
+        const updatedData = {
+            name: data.name,
+            email: data.email,
+            profession: professions.find(
+                (profession) => profession.value === data.profession
+            ) && {
+                name: professions.find(
+                    (profession) => profession.value === data.profession
+                ).label,
+                _id: professions.find(
+                    (profession) => profession.value === data.profession
+                ).value
+            },
+            sex: data.sex,
+            qualities: data.qualities.map((quality) => {
                 return {
-                    ...user,
-                    name: data.name,
-                    email: data.email,
-                    profession: {
-                        name: data.profession,
-                        _id: professions.find(
-                            (p) => p.label === data.profession
-                        )
-                    },
-                    sex: data.sex,
-                    qualities: data.qualities.map((q) => ({
-                        _id: q.value,
-                        name: q.label,
-                        color: q.color
-                    })),
-                    licence: data.licence
+                    _id: quality.value,
+                    name: quality.label,
+                    color: quality.color
                 };
-            }
-            return user;
-        });
-        localStorage.setItem("users", JSON.stringify(updatedData));
+            })
+        };
+        console.log("updatedData", updatedData);
+
+        api.users.update(userId, updatedData);
+
         history.goBack();
     };
 
@@ -159,7 +170,7 @@ const EditFromPage = () => {
                         <button
                             className="btn btn-primary w-100 mx-auto"
                             type="submit"
-                            disabled={!isValid}
+                            // disabled={!isValid}
                         >
                             Submit
                         </button>
