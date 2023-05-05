@@ -10,6 +10,7 @@
 		"axios": "^0.25.0",
 		"bootstrap": "^5.1.0",
 		"bootstrap-icons": "^1.5.0",
+		"history": "^4.9.0",
 		"lodash": "^4.17.15",
 		"nanoid": "^3.2.0",
 		"prop-types": "^15.7.2",
@@ -29,9 +30,6 @@
 		"eject": "react-scripts eject",
 		"format": "npx prettier --write ."
 	},
-	"overrides": {
-		"react-error-overlay": "6.0.9"
-	},
 	"eslintConfig": {
 		"extends": [
 			"react-app",
@@ -49,5 +47,6 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	}
+	},
+	"devDependencies": {}
 }
